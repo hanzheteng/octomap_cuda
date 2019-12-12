@@ -2,8 +2,10 @@
 #include "sensor_msgs/PointCloud2.h"
 #include "std_msgs/Float32.h"
 
-//Since we already know the laserscan used has fixed size, we will not bother using dynamic size
-#define SIZE 511
+
+// PointCloud2 data size = row_step*height
+// row_step = 10240, height = 480
+#define SIZE 10240*480
 
 float *average3(int num, float *in1, float *in2, float *in3, float *out);
 float in1[SIZE], in2[SIZE], in3[SIZE], out[SIZE];
@@ -28,7 +30,7 @@ int main(int argc, char **argv)
 	ros::Publisher pub = n.advertise<sensor_msgs::PointCloud2>("/points/filtered", 1);
 	ros::Subscriber sub = n.subscribe("/camera/depth/points", 100, pointcloudCallback);
 
-	// Initializes the vectors with zeros
+	// Initialize vectors
 	for (int i = 0; i < SIZE; ++i)
 	{
 		in1[i]=in2[i]=in3[i]=out[i]=0;
@@ -38,8 +40,8 @@ int main(int argc, char **argv)
 		ros::spinOnce();
 		average3(SIZE, in1, in2, in3, out);
 		// Assign frame_id and ranges size to be able to publish and visualize topic
-		//msg_pcl.header.frame_id="camera_rgb_optical_frame";
-		msg_pcl.data.resize(511);
+		msg_pcl.header.frame_id="camera_rgb_optical_frame";
+		msg_pcl.data.resize(SIZE);
 		// Assign values
 		for(int i=0;i<SIZE;i++)
 		{

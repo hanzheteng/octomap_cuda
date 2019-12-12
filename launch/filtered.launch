@@ -9,10 +9,11 @@
 		<param name="sensor_model/max_range" value="5.0" />
 		
 		<!-- data source to integrate (PointCloud2) -->
-		<remap from="cloud_in" to="/camera/depth/points" />
+		<remap from="cloud_in" to="/points/filtered" />
 	</node>
 
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find octomap_cuda)/rviz/config.rviz" />
 
+	<node name="octomap_cuda" pkg="octomap_cuda" type="octomap_cuda" />
 
 </launch>

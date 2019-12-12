@@ -7,6 +7,8 @@ project(octomap_cuda)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+FIND_PACKAGE(CUDA REQUIRED)
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
@@ -72,6 +74,11 @@ find_package(catkin REQUIRED COMPONENTS
 #   DEPENDENCIES
 #   std_msgs
 # )
+
+SET(CUDA_NVCC_FLAGS "-arch=compute_30" CACHE STRING "nvcc flags" FORCE)
+SET (CUDA_VERBOSE_BUILD ON CACHE BOOL "nvcc verbose" FORCE)
+SET(LIB_TYPE STATIC) 
+CUDA_ADD_LIBRARY(PointCloudLib ${LIB_TYPE} src/filter.cu)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -150,6 +157,12 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
+ADD_EXECUTABLE(octomap_cuda src/main.cpp)
+#ADD_DEPENDENCIES(octomap_cuda LaserFilterLib)
+TARGET_LINK_LIBRARIES(octomap_cuda
+   ${catkin_LIBRARIES}
+   PointCloudLib
+)
 #############
 ## Install ##
 #############
